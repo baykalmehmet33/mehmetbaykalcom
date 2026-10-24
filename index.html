@@ -70,6 +70,38 @@
           border: 1px solid black;
           margin-bottom: 6px;
         }
+
+        /* 600-900px arası: 2 kolon (önceden bu aralıkta kural yoktu) */
+        @media only screen and (min-width: 600px) and (max-width: 900px) {
+            .grid-sizer,
+            .grid-item {
+              width: 50%;
+            }
+        }
+
+        /* ---- Tema: Gazete ---- */
+        body { background:#fbfaf6; color:#111; font-family: Georgia, "Times New Roman", serif; margin:0; }
+        body a { color:#111; }
+
+        /* Header: ortalı başlık, altında çift çizgi */
+        body > div:first-of-type { border:none !important; border-bottom:4px double #111 !important; margin:0 16px; padding:18px 0 4px; }
+        body > div:first-of-type > div { float:none !important; width:100% !important; text-align:center; }
+        body > div:first-of-type p { text-align:center !important; padding:0 !important; }
+        h1 { font-size:3.2rem; font-weight:900; margin:4px 0; letter-spacing:-1px; }
+
+        /* Menü */
+        .filter { font-family:-apple-system, "Segoe UI", sans-serif; font-size:12px; letter-spacing:2px; text-transform:uppercase; margin:0 10px; }
+        .filter.active { text-decoration:none; border-bottom:2px solid #111; font-weight:700; }
+        .fa { font-size:16px !important; margin:0 6px; }
+
+        /* Kartlar */
+        .grid-item > div { margin:12px !important; padding:10px 4px 0 !important; border:none !important; border-top:3px solid #111 !important; }
+        h4 { font-size:1.4rem; font-weight:900; text-transform:uppercase; letter-spacing:-.3px; margin:4px 0; line-height:1.15; }
+        .tag { border:none; padding:0; font-family:-apple-system, sans-serif; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#666; }
+        .content { text-align:justify; hyphens:auto; line-height:1.55; font-size:15px; }
+
+        /* İlk harf büyük (drop cap) */
+        .content::first-letter { float:left; font-size:3.2em; line-height:.85; padding:4px 6px 0 0; font-weight:900; }
         </style>
 
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
