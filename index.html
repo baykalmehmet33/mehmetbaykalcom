@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+
+<html lang="en" >
+
+    <head>
+
+        <meta charset="UTF-8">
+
+        <title>Mehmet Baykal Personal Blog</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <style>
+        * { box-sizing: border-box; }
+
+        /* force scrollbar */
+        html { overflow-y: scroll; }
+
+        body { font-family: sans-serif; }
+
+        a { text-decoration: none; color: black; }
+
+        /* ---- grid ---- */
+
+        .grid {
+
+        }
+
+        /* clear fix */
+        .grid:after {
+          content: '';
+          display: block;
+          clear: both;
+        }
+
+        /* ---- .grid-item ---- */
+
+        @media only screen and (max-width: 600px) {
+            .grid-sizer,
+            .grid-item {
+              width: 100%;
+            }
+        }
+
+        @media only screen and (max-width: 1200px) and (min-width: 900px) {
+            .grid-sizer,
+            .grid-item {
+              width: 50%;
+            }
+        }
+
+        @media only screen and (min-width: 1200px) {
+            .grid-sizer,
+            .grid-item {
+              width: 33.33333%;
+            }
+        }
+
+
+        .grid-item {
+          float: left;
+        }
+
+        .filter.active { font-weight: bold; text-decoration: underline; }
+
+        .tag {
+          display: inline-block;
+          font-size: 12px;
+          padding: 1px 6px;
+          border: 1px solid black;
+          margin-bottom: 6px;
+        }
+        </style>
+
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    </head>
+
+    <body translate="no">
+
+        <div style="width: 100%;overflow:auto;border: 2px solid black;">
+
+            <div style="float:left; width: 60%">
+
+                <h1><a href="/"> Mehmet Baykal</a></h1>
+
+            </div>
+
+            <div style="float:right; width: 40%;">
+
+                <p style="text-align:right; padding-right:10px;">
+                    <a href="#all" class="filter" data-filter="all">all</a>  
+                    <a href="#felsefe" class="filter" data-filter="felsefe">felsefe</a>  
+                    <a href="#kitap" class="filter" data-filter="kitap">kitap</a>  
+                    <a href="#python" class="filter" data-filter="python">python</a>  
+                    <a href="#seyahat" class="filter" data-filter="seyahat">seyahat</a>  
+                    <a href="#programming" class="filter" data-filter="programming">programming</a>  
+                    <a href="#alinti" class="filter" data-filter="alinti">alinti</a>  
+                </p>
+
+                <p style="text-align:right; padding-right:10px;">
+                    <a href="https://x.com/baykalmehmet"><i class="fa fa-twitter" style="font-size:24px"></i></a>
+                    <a href="https://www.instagram.com/mehmet_baykal"><i class="fa fa-instagram" style="font-size:24px"></i></a>
+                    <a href="https://www.linkedin.com/in/mehmetbaykal"><i class="fa fa-linkedin" style="font-size:24px"></i></a>
+                </p>
+
+            </div>
+
+        </div>
+
+<p id="empty-msg" style="display:none; padding:10px;">Bu kategoride makale yok.</p>
+
+<div class="grid">
+
+    <div class="grid-sizer"></div>
+
+</div>
+
+<script src='https://unpkg.com/masonry-layout@4/dist/masonry.pkgd.js'></script>
+
+<script>
+
+    var grid = document.querySelector('.grid');
+    var links = document.querySelectorAll('.filter');
+    var emptyMsg = document.getElementById('empty-msg');
+    var allItems = [];
+    var msnry = null;
+
+    function escapeHtml(text) {
+      var div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Bir makale nesnesinden kart oluşturur.
+    // content alanı HTML kabul eder (<br>, <p>, <pre>, <ul> vb.)
+    function createCard(article) {
+      var item = document.createElement('div');
+      item.className = 'grid-item';
+      item.setAttribute('data-category', article.category);
+
+      var html = '<div style="margin:3px;padding:3px;border-bottom:2px solid black;">' +
+        '<h4>' + escapeHtml(article.title) + '</h4>' +
+        '<span class="tag">' + escapeHtml(article.category) + '</span>' +
+        '<div class="content">' + article.content + '</div>';
+
+      if (article.readMore) {
+        html += '<p><a href="' + encodeURI(article.readMore) + '"> Keep Reading </a></p>';
+      }
+
+      item.innerHTML = html + '</div>';
+      return item;
+    }
+
+    function applyFilter(category) {
+      var visible = 0;
+
+      allItems.forEach(function (item) {
+        if (item.parentNode) grid.removeChild(item);
+      });
+      allItems.forEach(function (item) {
+        if (category === 'all' || item.getAttribute('data-category') === category) {
+          grid.appendChild(item);
+          visible++;
+        }
+      });
+
+      emptyMsg.style.display = visible === 0 ? 'block' : 'none';
+
+      for (var i = 0; i < links.length; i++) {
+        links[i].classList.toggle('active', links[i].getAttribute('data-filter') === category);
+      }
+
+      if (msnry) {
+        msnry.reloadItems();
+        msnry.layout();
+      }
+    }
+
+    function filterFromHash() {
+      var cat = window.location.hash.replace('#', '') || 'all';
+      var known = Array.prototype.some.call(links, function (l) {
+        return l.getAttribute('data-filter') === cat;
+      });
+      applyFilter(known ? cat : 'all');
+    }
+
+    for (var i = 0; i < links.length; i++) {
+      links[i].addEventListener('click', function (e) {
+        e.preventDefault();
+        var cat = this.getAttribute('data-filter');
+        history.replaceState(null, '', '#' + cat);
+        applyFilter(cat);
+      });
+    }
+
+    window.addEventListener('hashchange', filterFromHash);
+
+    fetch('articles.json', { cache: 'no-cache' })
+      .then(function (res) {
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        return res.json();
+      })
+      .then(function (articles) {
+        allItems = articles.map(createCard);
+
+        if (typeof Masonry !== 'undefined') {
+          msnry = new Masonry(grid, {
+            itemSelector: '.grid-item',
+            columnWidth: '.grid-sizer',
+            percentPosition: true
+          });
+        }
+
+        filterFromHash();
+      })
+      .catch(function (err) {
+        emptyMsg.textContent = 'Makaleler yüklenemedi (' + err.message + ').';
+        emptyMsg.style.display = 'block';
+      });
+
+</script>
+
+    </body>
+
+</html>
